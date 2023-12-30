@@ -1,0 +1,31 @@
+{% extends "table_layout.html" %}
+{% block table_body %}
+<thead>
+    <tr>
+        <th>Coach ID</th>
+        <th>Coach Name</th>
+        <th>Specialization</th>
+        <th>Years Of Experience</th>
+        <th>Link</th>
+    </tr>
+</thead>
+<tbody>
+    {% for c in results %}
+    <tr id="{{c.id}}" :class="{row_hightline_color: high_light_row_arg_and_ID.includes($el.id)}">
+        <td>{{ c.id}} </td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.specialization}}</td>
+        <td>{{ c.years_of_experience}}</td>
+        <td><a  @click="show_associated = true; high_light_row_arg_and_ID='coach_id={{c.id}}';
+            full_current_uri='/'+current_uri+'?'+high_light_row_arg_and_ID;
+            "
+            x-init="$watch('current_uri, currentTab', () => htmx.process($el))"
+            x-bind:hx-get="`/${current_uri}?coach_id={{c.id}}&needed=${currentTab}`" 
+            hx-trigger="click delay:100ms" x-bind:hx-target="'#' + activeTab_map_target_id[activeTab]"
+            >
+            Associated Details Below
+        </a> </td>
+    </tr>
+    {% endfor %}
+</tbody>
+{% endblock %}

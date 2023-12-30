@@ -1,0 +1,37 @@
+
+{% extends "table_layout.html" %}
+{% block table_body %}
+<thead>
+    <tr>
+        <th>Class ID</th>
+        <th>Subject Name</th>
+        <th>Average score improvement</th>
+        <th>Homework Completion Rate</th>
+        <th>Attendance Rate</th>
+        {% if not needed %}
+            <th>Link</th>
+        {% endif %}
+    </tr>
+</thead>
+
+<tbody>
+    {% for sp in results %}
+    <tr id="{{sp.class_id}}" :class="{row_hightline_color: high_light_row_arg_and_ID.includes($el.id)}">
+        <td>{{ sp.class_id}} </td>
+        <td>{{ sp.subject.name }}</td>
+        <td>{{ sp.average_score_improvement}}</td>
+        <td>{{ sp.homework_completion_rate}}</td>
+        <td>{{ sp.attendance_rate}}</td>
+            <td><a  @click="show_associated = true; high_light_row_arg_and_ID='student_progress_id={{sp.class_id}}';
+                full_current_uri='/'+current_uri+'?'+high_light_row_arg_and_ID;
+                "
+                x-init="$watch('current_uri, currentTab', () => htmx.process($el))"
+                x-bind:hx-get="`/${current_uri}?student_progress_id={{sp.class_id}}&needed=${currentTab}`" 
+                hx-trigger="click delay:100ms" x-bind:hx-target="'#' + activeTab_map_target_id[activeTab]"
+                >
+                Associated Details Below
+            </a> </td>
+    </tr>
+    {% endfor %}
+</tbody>
+{% endblock %}

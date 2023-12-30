@@ -1,0 +1,30 @@
+
+
+{% extends "table_layout.html" %}
+{% block table_body %}
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Link</th>
+    </tr>
+</thead>
+<tbody>
+    {% for teacher in results %}
+    <tr id="{{teacher.id}}" :class="{row_hightline_color:high_light_row_arg_and_ID.includes($el.id)}">
+        <td>{{ teacher.id}} </td>
+        <td>{{ teacher.name}} </td>
+        <td><a  @click="show_associated = true; 
+            high_light_row_arg_and_ID='teacher_id={{teacher.id}}';
+            full_current_uri='/'+current_uri+'?'+high_light_row_arg_and_ID;
+            "
+            x-init="$watch('current_uri, currentTab', () => htmx.process($el))"
+            x-bind:hx-get="`/${current_uri}?teacher_id={{teacher.id}}&needed=${currentTab}`" 
+            hx-trigger="click delay:100ms" x-bind:hx-target="'#' + activeTab_map_target_id[activeTab]"
+            >
+            Associated Details Below
+        </a> </td>
+    </tr>
+    {% endfor %}
+</tbody>
+{% endblock %}

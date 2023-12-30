@@ -1,0 +1,14 @@
+{% if flash_flag %}
+    <tr class="flash"><td>{% with messages=flash_flag %}
+        {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}</td></tr>
+{% else %}
+    {% block table_body %}{% endblock %}
+
+{% endif %}

@@ -1,0 +1,29 @@
+{% extends "table_layout.html" %}
+{% block table_body %}
+<thead>
+    <tr>
+        <th>Resource ID</th>
+        <th>Resource Name</th>
+        <th>Utilization Rate</th>
+        <th>Link</th>
+    </tr>
+</thead>
+<tbody>
+    {% for r in results %}
+    <tr id="{{r.id}}" :class="{row_hightline_color: high_light_row_arg_and_ID.includes($el.id)}">
+        <td>{{ r.id}} </td>
+        <td>{{ r.name }}</td>
+        <td>{{ r.utilization_rate}}</td>
+        <td><a  @click="show_associated = true; high_light_row_arg_and_ID='resource_id={{r.id}}';
+            full_current_uri='/'+current_uri+'?'+high_light_row_arg_and_ID;
+            "
+            x-init="$watch('current_uri, currentTab', () => htmx.process($el))"
+            x-bind:hx-get="`/${current_uri}?resource_id={{r.id}}&needed=${currentTab}`" 
+            hx-trigger="click delay:100ms" x-bind:hx-target="'#' + activeTab_map_target_id[activeTab]"
+            >
+            Associated Details Below
+        </a> </td>
+    </tr>
+    {% endfor %}
+</tbody>
+{% endblock %}

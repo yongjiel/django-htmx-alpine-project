@@ -1,0 +1,367 @@
+<html lang="en">
+    <!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education board</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.9"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <style>
+        .flash {
+            background:rgb(242, 199, 199) !important;
+        }
+        .frame-container {
+          width: 100%;
+          height: 250px;
+          overflow: auto; 
+        }
+    
+        .table-container {
+          width: 100%; /* Make the table container take the full width of the frame */
+        }
+        
+        .high-light{background:rgb(202, 202, 205) !important;}
+        .light-grey{background:rgb(242, 242, 245) !important;}
+
+        .tab-label {
+        cursor: pointer;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+        display: inline-block;
+        border-radius: 7%
+        }
+
+        .tab-content {
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-top: none;
+        }
+
+        .tab_active{
+            background-Color: rgb(228, 241, 208);
+        }
+        .display_none {
+            display: none;
+        }
+
+        .row_hightline_color {
+            background-Color: rgb(202, 202, 205);
+        }
+    </style>
+   <script>
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('alpineData', () => ({
+                show_associated: false, 
+                objective: 'Education Dashboard', 
+                high_light_row_arg_and_ID: '', 
+                tabDisabled: { Teachers: false,
+                                Teacher_activities: false,
+                                Subjects: false, 
+                                Student_progresses: false,
+                                Resources: false,
+                                Coaches: false},
+                currentTab: '',
+                object_name: {Teachers: 'Teacher',
+                                Teacher_activities: 'Teacher activity',
+                                Subjects: 'Subject',
+                                Student_progresses: 'Student progress',
+                                Resources: 'Resource',
+                                Coaches: 'Coach'},
+                uri_map: { Teachers: 'teacher_details',
+                            Teacher_activities: 'teacher_activity_details',
+                            Subjects: 'subject_details',
+                            Student_progresses: 'student_progress_details',
+                            Resources:  'resource_details', 
+                            Coaches:'coach_details'
+                        },
+                current_uri: '',
+                full_current_uri: '',
+                userInput: {
+                    Teachers: '',
+                    Teacher_activities: '',
+                    Subjects: '',
+                    Student_progresses: '',
+                    Resources: '',
+                    Coaches: ''
+                },
+                activeTab:  0,
+                activeTab_map_target_id : [ 'teacher_detail',
+                            'teacher_activity_detail',
+                            'subject_detail',
+                            'student_progress_detail',
+                            'resource_detail', 
+                            'coach_detail']
+                        ,
+        
+                initiate_by_objetive(objective, currentTab, for_input_box, activeTab){
+                    this.show_associated = false;
+                    this.objective = objective;
+                    this.high_light_row_arg_and_ID = '';
+                    this.current_uri= this.uri_map[objective];
+                    this.currentTab=currentTab;
+                    this.activeTab = activeTab;
+                    Object.keys(this.tabDisabled).forEach((k, index) => {
+                        (k===objective) ? this.tabDisabled[k]=true : this.tabDisabled[k]=false
+                    });
+                    if (for_input_box){
+                        Object.keys(this.userInput).forEach((k, index) => {
+                            if (k !== objective) {
+                                this.userInput[k]='' } });
+                    } else{
+                        Object.keys(this.userInput).forEach((k, index) => this.userInput[k]='');
+
+                    }
+                } 
+        }))
+    })
+</script>
+</head>
+<body x-data="alpineData">
+    <header class="is-small  is-marginless is-paddingless">
+        <table class="table is-fullwidth is-marginless is-paddingless">
+        <tr>
+        <td><a href="/">Home</a></td>
+        <td><a @click="initiate_by_objetive('Teachers', 'Teacher_activities', false, 1);"
+            hx-get="/teachers" hx-trigger="click delay:100ms" hx-target="#results"
+            >
+            Teachers
+            </a><br/>
+            <input type="text" class="input" placeholder="Search John Doe" name="q_teachers"
+                x-model="userInput.Teachers"
+                @click="initiate_by_objetive('Teachers', 'Teacher_activities', true, 1);"
+                hx-get="/teachers" hx-trigger="keyup changed delay:500ms" hx-target="#results"
+                onfocus="document.getElementById('results').innerHTML='';">
+        </td>   
+        <td><a @click="initiate_by_objetive('Teacher_activities','Teachers', false, 0);"
+
+            hx-get="/teacher_activities" hx-trigger="click delay:100ms" hx-target="#results"
+            >
+            Teacher Activities
+            </a><br/>
+            <input type="text" class="input" placeholder="Search John Doe" name="q_teacher_activities"
+                x-model="userInput.Teacher_activities"
+                @click="initiate_by_objetive('Teacher_activities','Teachers', true, 0);"
+                hx-get="/teacher_activities" hx-trigger="keyup changed delay:500ms" hx-target="#results"
+                onfocus="document.getElementById('results').innerHTML='';">
+            </td>
+        <td>
+            <a @click=" initiate_by_objetive('Subjects','Teachers', false, 0);"
+                hx-get="/subjects" hx-trigger="click delay:100ms" hx-target="#results">
+                Subjects
+            </a><br/>
+            <input type="text" class="input" placeholder="Search Mathematics" name="q_subjects"
+                x-model="userInput.Subjects"
+                @click="initiate_by_objetive('Subjects','Teachers', true, 0); "
+                hx-get="/subjects" hx-trigger="keyup changed delay:100ms" hx-target="#results"
+                onfocus="document.getElementById('results').innerHTML='';">
+        </td>
+        <td>
+            <a @click="initiate_by_objetive('Student_progresses','Teachers', false, 0);"
+            hx-get="/student_progresses" hx-trigger="click delay:100ms" hx-target="#results">
+                Student Progress 
+            </a><br/>
+            <input type="text" class="input" placeholder="Search Mathematics" name="q_student_progresses"
+                x-model="userInput.Student_progresses"
+                @click="initiate_by_objetive('Student_progresses','Teachers', true, 0);"
+                hx-get="/student_progresses" hx-trigger="keyup changed delay:100ms" hx-target="#results"
+                onfocus="document.getElementById('results').innerHTML='';">
+        </td>
+        <td>
+            <a @click="initiate_by_objetive('Resources','Teachers', false, 0);"
+
+            hx-get="/resource_management" hx-trigger="click delay:100ms" hx-target="#results">
+                Resources
+            </a><br/>
+            <input type="text" class="input" placeholder="Search Chemistry Lab" name="q_resources" 
+                x-model="userInput.Resources"
+                @click="initiate_by_objetive('Resources','Teachers', true, 0);"
+                hx-get="/resource_management" hx-trigger="keyup changed delay:100ms" hx-target="#results"
+                onfocus="document.getElementById('results').innerHTML='';">
+        </td>
+        <td>
+            <a @click="initiate_by_objetive('Coaches','Teachers', false, 0);"
+            hx-get="/coaches" hx-trigger="click delay:100ms" hx-target="#results">
+                Coaches
+            </a><br/>
+            <input type="text" class="input" placeholder="Search Emily Turner" name="q_coaches"
+                x-model="userInput.Coaches"
+                @click="initiate_by_objetive('Coaches','Teachers', true, 0);"
+                hx-get="/coaches" hx-trigger="keyup changed delay:100ms" hx-target="#results"
+                onfocus="document.getElementById('results').innerHTML='';">
+        </td>
+        </tr>
+        </table>
+        <hr class="is-marginless is-paddingless" ></hr>
+    </header>
+    <section class="section mt-2 pt-3" >
+        <div class="columns is-centered"> 
+            <p class="tag is-primary is-info is-large column is-one-quarter"
+                x-text="objective">
+                </p>
+        </div>
+        <!-- primary table -->
+        <div class="frame-container">
+            <div class="table-container">
+                <table class="table is-fullwidth light-grey" id="results">
+                </table>
+            </div>
+        </div>
+         <!-- sub association table -->
+        <div  x-show="show_associated">
+            <hr class="high-light"></hr>
+            <p class="tag is-primary is-light is-large s-marginless is-paddingless" 
+                x-text="object_name[objective] + ' ' + 
+                    high_light_row_arg_and_ID.split('=')[1] + ', associated to:'"></p>
+            <br/>
+
+            <div class="tab-wrapper">
+                <div class="flex">
+                     <!-- tab label -->
+                  <label
+                    class="tab-control tab-label"
+                    :class="{
+                            'tab_active': currentTab==='Teachers',
+                            'display_none': tabDisabled.Teachers,
+                            'active': activeTab === 0}"
+
+                    @click="
+                            currentTab='Teachers';
+                            activeTab = 0;
+                            "
+                    x-init="$watch('full_current_uri', () => htmx.process($el))"
+                    x-bind:hx-get="`${full_current_uri}&needed=Teachers`" 
+                    hx-trigger="click delay:100ms" hx-target="#teacher_detail"
+
+                  >Teachers</label>
+                  <label
+                        class=" tab-control tab-label" 
+                        :class="{
+                                'tab_active': currentTab==='Teacher_activities',
+                                'display_none': tabDisabled.Teacher_activities,
+                                'active': activeTab === 1}"
+
+                        @click="
+                                currentTab='Teacher_activities';
+                                activeTab = 1;
+                                "
+                        x-init="$watch('full_current_uri', () => htmx.process($el))"
+                        x-bind:hx-get="`${full_current_uri}&needed=Teacher_activities`" 
+                        hx-trigger="click delay:100ms" hx-target="#teacher_activity_detail"
+
+                  >Teacher Activities</label>
+                  <label
+                        class="tab-control tab-label" 
+                        :class="{
+                                'tab_active': currentTab==='Subjects',
+                                'display_none':tabDisabled.Subjects,
+                                'active': activeTab === 2
+                                }"
+                        
+                        @click="
+                                currentTab='Subjects';
+                                activeTab = 2;
+                                "
+                        x-init="$watch('full_current_uri', () => htmx.process($el))"
+                        x-bind:hx-get="`${full_current_uri}&needed=Subjects`"  
+                        hx-trigger="click delay:100ms" hx-target="#subject_detail"
+                  >Subjects</label>
+
+                <label
+                    class="tab-control tab-label" 
+                    :class="{
+                            'tab_active': currentTab==='Student_progresses',
+                            'display_none': tabDisabled.Student_progresses,
+                            'active': activeTab === 3}"
+
+                    @click="
+                            currentTab='Student_progresses';
+                            activeTab = 3;
+                            "
+                    x-init="$watch('full_current_uri', () => htmx.process($el))"
+                    x-bind:hx-get="`${full_current_uri}&needed=Student_progresses`" 
+                    hx-trigger="click delay:100ms" hx-target="#student_progress_detail"
+
+                >Student progresses</label>
+                <label
+                    class=" tab-control tab-label" 
+                    :class="{
+                            'tab_active': currentTab==='Resources',
+                            'display_none': tabDisabled.Resources,
+                            'active': activeTab === 4}"
+
+                    @click="
+                            currentTab='Resources';
+                            activeTab = 4;
+                            "
+                    x-init="$watch('full_current_uri', () => htmx.process($el))"
+                    x-bind:hx-get="`${full_current_uri}&needed=Resources`" 
+                    hx-trigger="click delay:100ms" hx-target="#resource_detail"
+
+                >Resources</label>
+                <label
+                    class="tab-control tab-label" 
+                    :class="{
+                            'tab_active': currentTab==='Coaches',
+                            'display_none':tabDisabled.Coaches,
+                            'active': activeTab ===5}"
+                        
+                    @click="
+                            currentTab='Coaches';
+                            activeTab = 5;
+                            "
+                    x-init="$watch('full_current_uri', () => htmx.process($el))"
+                    x-bind:hx-get="`${full_current_uri}&needed=Coaches`"  
+                    hx-trigger="click delay:100ms" hx-target="#coach_detail"
+                  >Coaches</label>
+                </div>
+              
+                <!-- tab content -->
+                <div class="frame-container">
+                <div class="table-container">
+                    <div id="teacher_detail" class="tab-panel tab-content"
+                        :class="{ 'active': activeTab === 0}"
+                        x-show.transition.in.opacity.duration.600="activeTab === 0">
+                    <p>Teachers tab.</p>
+                    </div>
+                    <div id="teacher_activity_detail" class="tab-panel tab-content"
+                        :class="{ 'active': activeTab === 1 }"
+                        x-show.transition.in.opacity.duration.600="activeTab === 1">
+                    <p>Teacher activities tab.</p>
+                    </div>
+                    <div id="subject_detail" class="tab-panel tab-content" 
+                        :class="{ 'active': activeTab === 2}"
+                        x-show.transition.in.opacity.duration.600="activeTab === 2">
+                    <p>Subjects tab.</p>
+                    </div>
+                    <div id="student_progress_detail" class="tab-panel tab-content"
+                        :class="{ 'active': activeTab === 3 }"
+                        x-show.transition.in.opacity.duration.600="activeTab === 3">
+                    <p>Student progresses tab.</p>
+                    </div>
+                    <div id="resource_detail" class="tab-panel tab-content"
+                        :class="{ 'active': activeTab === 4' }"
+                        x-show.transition.in.opacity.duration.600="activeTab === 4">
+                    <p>Resources tab.</p>
+                    </div>
+                    <div id="coach_detail" class="tab-panel tab-content" 
+                        :class="{ 'active': activeTab === 5 }"
+                        x-show.transition.in.opacity.duration.600="activeTab === 5">
+                    <p>Coaches tab.</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            
+
+
+        </div>
+
+    </section>
+</body>
+
+</html>

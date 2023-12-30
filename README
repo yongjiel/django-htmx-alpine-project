@@ -1,0 +1,38 @@
+1. This project comes up with flask + htmx + Alpine.js as front
+   end, flask + PostgreSQL as back end.
+
+2. Prerequisite: 
+   1. Python3.11 is used in development. Please get 
+      Python3.11 ready. 
+   2. PostgresSQL server is installed in local. 
+      `createdb` and `dropdb` command-line commands should exist.
+
+3. Set up the environment variables. This is a MUST.
+   `export POSTGRES_USERNAME=<your_postgre_username>;`
+   `export POSTGRES_PASSWORD=<your_postgre_password>;`
+   `export POSTGRES_HOST=<your_postgres_host>;`
+   `export POSTGRES_PORT=<your_postgres_post>`
+   `export POSTGRES_DB=<your_prstgres_db>`
+   If POSTGRES_DB exits in PostgreSQL server, please remove it
+   first, then recreate it with empty DB.
+
+4. Set up the back end and front end server's environment varialbes.
+   These varialbes will be used in different spots in the config and loading-data and start-servers steps. This is a MUST.
+   `export PROTOCOL=<http | https>`
+   `export BACKENDHOST=<your_backend_host>;`, like 127.0.0.1
+   `export BACKENDPORT=<your_back_end_port>;`,   like 8000
+   `export FRONTENDHOST=<your_frontend_host>;`, like 127.0.0.1
+   `export FRONTENDPORT=<your_frontend_port>`, like 5000
+
+5. Now please run command `./run_project.sh`. 
+   This script run these steps.
+   1. Boot up virtual env in back end.
+   2. Install packages for back end.
+   3. DB schema migration in back end.
+   4. Start back end server in the mentioned host and port above.
+   5. Load data into back end.
+   6. Boot up vitual env in front end.
+   7. Install package for front end.
+   8. Start front end serve in teh mentioned host and port above.
+   Now the back end server should be ready with the host and port above.
+   Now the front end server should be ready with the host and port above.

@@ -1,0 +1,84 @@
+
+<table class="table is-fullwidth light-grey" >
+    <thead>
+        <tr>
+            {% if needed == "Teachers" %}
+                <th>Teacher ID</th>
+                <th>Teacher Name</th>
+            {% elif needed == "Teacher_activities" %}
+                <th>Activity ID</th>
+                <th>Teacher ID</th>
+                <th>Teacher Name</th>
+                <th>Last Active</th>
+                <th>Activity Score</th>
+                <th>Student Interaction Rating</th>
+            {% elif needed == "Student_progresses" %}
+                <th>Class ID</th>
+                <th>Subject Name</th>
+                <th>Average Score Improvement</th>
+                <th>Homework Completion Rate</th>
+                <th>Attendance Rate</th>
+            {% elif needed == 'Resources' %}
+                <th>Teacher Name</th>
+                <th>Resource ID</th>
+                <th>Resource Name</th>
+                <th>Utilization Rate</th>
+            {% elif needed == 'Coaches' %}
+                <th>Teacher Name</th>
+                <th>Coach ID</th>
+                <th>Coach Name</th>
+                <th>Specialization</th>
+                <th>Years of Experience</th> 
+                <th>Last Meeting Date </th>
+                <th>Meeting notes </th>
+            {% else %}
+                <th>Teacher ID</th>
+                <th>Teacher Name</th>
+                <th>Subject ID</th>
+                <th>Subject Name</th>
+            {% endif %}
+           
+        </tr>
+    </thead>
+    <tbody>
+        {% for ts in results %}
+        <tr>
+            {% if needed == "Teachers" %}
+                <td>{{ ts[0].id }}</td>
+                <td>{{ ts[0].name }}</td>
+            {% elif needed == "Teacher_activities" %}
+                <td>{{ ts[-1].id }}</td>
+                <td>{{ ts[0].id }}</td>
+                <td>{{ ts[0].name }}</td>
+                <td>{{ ts[-1].last_active }}</td>
+                <td>{{ ts[-1].activity_score }}</td>
+                <td>{{ ts[-1].student_interaction_rating }}</td>
+            {% elif needed == "Student_progresses" %}
+                <td>{{ ts[1].class_id }}</td>
+                <td>{{ ts[0].name }}</td>
+                <td>{{ ts[1].average_score_improvement }}</td>
+                <td>{{ ts[1].homework_completion_rate }}</td>
+                <td>{{ ts[1].attendance_rate }}</td>
+            {% elif needed == 'Resources' %}
+                <td>{{ ts[0].name }}</td>
+                <td>{{ ts[2].id }}</td>
+                <td>{{ ts[2].name }}</td>
+                <td>{{ ts[2].utilization_rate }}</td>
+            {% elif needed == 'Coaches' %}
+                <td>{{ ts[0].name }}</td>
+                <td>{{ ts[2].id }}</td>
+                <td>{{ ts[2].name }}</td>
+                <td>{{ ts[2].specialization }}</td>
+                <td>{{ ts[2].years_of_experience }}</td>
+                <td>{{ ts[1].last_meeting_date }}</td>
+                <td>{{ ts[1].meeting_notes }}</td>
+            {% else %}
+                <td>{{ ts[0].id }}</td>
+                <td>{{ ts[0].name }}</td>
+                <td>{{ ts[2].id }}</td>
+                <td>{{ ts[2].name }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
