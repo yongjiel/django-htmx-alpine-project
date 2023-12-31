@@ -1,0 +1,26 @@
+=== Backend ===
+1. In your local os, `python -m django --version` check django if exists.
+2. If exists, `django-admin startproject <your_project>.`
+3. `cd <your_project>, python3 -m venv venv` to create venv.
+4. `source venv/bin/activate` to venv environment.
+5. Add requirements.txt, add `django` into it.
+6. Run `pip install -r requirements`.
+7. Try the test ` python manage.py runserver 8001`.
+8. `python manage.py startapp api`
+9. config urlspattern in api/urls.py.
+10. config urlspattern in back_end/urls.py.
+11. add 'api' into INSTALL_APPS in settings.py.
+12. pip install djangorestframework
+13. add 'rest_framework' into INSTALL_APPS in settings.py.
+14. Add to views.py with `from rest_framework.decorators import api_view`
+15. Try to add def with @app_view.
+16. In app/urls.py, add params into path() and add it into urlspattern.
+17. Try the server now `python manage.py runserver` to see if works.
+18. Add models.py, serializers.py, and add defs into views.
+19. `python manage.py makemigrations;python manage.py migrate`
+
+
+===== FrontEnd ====
+All above.
+Also watch out config.py file in front end.
+.

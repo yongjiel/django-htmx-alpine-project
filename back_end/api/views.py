@@ -364,3 +364,248 @@ class TeacherSubjectViewSet(viewsets.ModelViewSet):
         d = TeacherSubjectSerializer(queryset, many=True).data
         return Response(d, status=status.HTTP_200_OK)
 
+
+class TeacherDetailsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows teachers to be viewed or edited.
+    """
+    serializer_class = TeacherSerializer
+    queryset = Teacher.objects.all()
+
+    def list(self, request):
+        teacher_id = request.GET.get('teacher_id')
+        needed = request.GET.get('needed')
+        
+        if needed == 'Teacher_activities':
+            c = Activity.objects.select_related('teacher').filter(teacher__id=teacher_id).all()
+            d = ActivitySerializer(c, many=True).data
+        elif needed == 'Subjects':
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(teacher__id=teacher_id).all()
+            d = TeacherSubjectSerializer(c, many=True).data
+        elif needed == 'Student_progresses':
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(teacher__id=teacher_id).all()
+            s_ids = [cc.subject.id for cc in c]
+            c = StudentProgress.objects.select_related('subject').filter(subject__id__in=s_ids).all()
+            d = StudentProgressSerializer(c, many=True).data
+        elif needed == 'Resources':
+            c = ResourceTeacher.objects.select_related('resource', 'teacher').filter(teacher__id=teacher_id).all()
+            d = ResourceTeacherSerializer(c, many=True).data
+        elif needed == 'Coaches':
+            c = CoachTeacher.objects.select_related('teacher','coach' ).filter(teacher__id=teacher_id).all()
+            d = CoachTeacherSerializer(c, many=True).data
+        else:
+            c = Teacher.objects.all()
+            d = TeacherSerializer(c, many=True).data
+
+        return Response(d, status=status.HTTP_200_OK)
+
+
+class ActivityDetailsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows teachers to be viewed or edited.
+    """
+    serializer_class = ActivitySerializer
+    queryset = Activity.objects.all()
+
+    def list(self, request):
+        teacher_activity_id = request.GET.get('teacher_activity_id')
+        needed = request.GET.get('needed')
+        
+        if needed == 'Teachers':
+            c = Activity.objects.select_related('teacher').filter(id=teacher_activity_id).all()
+            d = TeacherSerializer([cc.teacher for cc in c], many=True).data
+        elif needed == 'Subjects':
+            c = Activity.objects.select_related('teacher').filter(id=teacher_activity_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = TeacherSubject.objects.select_related('teacher', 'subject').filter(teacher__id__in=ts).all()
+            d = TeacherSubjectSerializer(c, many=True).data
+        elif needed == 'Student_progresses':
+            c = Activity.objects.select_related('teacher').filter(id=teacher_activity_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = TeacherSubject.objects.select_related('teacher', 'subject').filter(teacher__id__in=ts).all()
+            ss = [cc.subject.id for cc in c]
+            c = StudentProgress.objects.select_related('subject').filter(subject__id__in=ss).all()
+            d = StudentProgressSerializer(c, many=True).data
+        elif needed == 'Resources':
+            c = Activity.objects.select_related('teacher').filter(id=teacher_activity_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(teacher__id__in=ts).all()
+            d = ResourceTeacherSerializer(c, many=True).data
+        elif needed == 'Coaches':
+            c = Activity.objects.select_related('teacher').filter(id=teacher_activity_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(teacher__id__in=ts).all()
+            d = CoachTeacherSerializer(c, many=True).data
+        else:
+            c = Activity.objects.all()
+        
+        return Response(d, status=status.HTTP_200_OK)
+    
+
+class SubjectDetailsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows teachers to be viewed or edited.
+    """
+    serializer_class = SubjectSerializer
+    queryset = Subject.objects.all()
+
+    def list(self, request):
+        subject_id = request.GET.get('subject_id')
+        needed = request.GET.get('needed')
+        
+        if needed == 'Teachers':
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id=subject_id).all()
+            d = TeacherSubjectSerializer(c, many=True).data
+        elif needed == 'Teacher_activities':
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id=subject_id).all()
+            ts = [cc.teacher.id  for cc in c]
+            c = Activity.objects.select_related('teacher').filter(teacher__id__in=ts).all()
+            d = ActivitySerializer(c, many=True).data
+        elif needed == 'Student_progresses':
+            c = StudentProgress.objects.select_related('subject').filter(subject__id=subject_id).all()
+            d = StudentProgressSerializer(c, many=True).data
+        elif needed == 'Resources':
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id=subject_id).all()
+            ts = [cc.teacher.id  for cc in c]
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(teacher__id__in=ts).all()
+            d = ResourceTeacherSerializer(c, many=True).data
+        elif needed == 'Coaches':
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id=subject_id).all()
+            ts = [cc.teacher.id  for cc in c]
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(teacher__id__in=ts).all()
+            d = CoachTeacherSerializer(c, many=True).data
+        else:
+            c = Subject.objects.all()
+            d = SubjectSerializer(c, many=True).data
+        return Response(d, status=status.HTTP_200_OK)
+    
+
+class StudentProgressDetailsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows teachers to be viewed or edited.
+    """
+    serializer_class = StudentProgressSerializer
+    queryset = StudentProgress.objects.all()
+
+    def list(self, request):
+        sp_id = request.GET.get('student_progress_id')
+        needed = request.GET.get('needed')
+        
+        if needed == 'Teachers':
+            c = StudentProgress.objects.select_related('subject').filter(class_id=sp_id).all()
+            ss = [cc.subject.id for cc in c]
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id__in=ss).all()
+            d = TeacherSubjectSerializer(c, many=True).data
+        elif needed == 'Teacher_activities':
+            c = StudentProgress.objects.select_related('subject').filter(class_id=sp_id).all()
+            ss = [cc.subject.id for cc in c]
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id__in=ss).all()
+            ts = [cc.teacher.id for cc in c]
+            c = Activity.objects.select_related('teacher').filter(teacher__id__in=ts).all()
+            d = ActivitySerializer(c, many=True).data
+        elif needed == 'Subjects':
+            c = StudentProgress.objects.select_related('subject').filter(class_id=sp_id).all()
+            ss = [cc.subject for cc in c]
+            d = SubjectSerializer(ss, many=True).data
+        elif needed == 'Resources':
+            c = StudentProgress.objects.select_related('subject').filter(class_id=sp_id).all()
+            ss = [cc.subject.id for cc in c]
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id__in=ss).all()
+            ts = [cc.teacher.id for cc in c]
+            c = ResourceTeacher.objects.select_related('resource', 'teacher').filter(teacher__id__in=ts).all()
+            d = ResourceTeacherSerializer(c, many=True).data
+        elif needed == 'Coaches':
+            c = StudentProgress.objects.select_related('subject').filter(class_id=sp_id).all()
+            ss = [cc.subject.id for cc in c]
+            c = TeacherSubject.objects.select_related('subject', 'teacher').filter(subject__id__in=ss).all()
+            ts = [cc.teacher.id for cc in c]
+            c = CoachTeacher.objects.select_related('coach', 'teacher').filter(teacher__id__in=ts).all()
+            d = CoachTeacherSerializer(c, many=True).data
+        else:
+            c = StudentProgress.objects.all()
+            d = StudentProgressSerializer(c, many=True).data
+        return Response(d, status=status.HTTP_200_OK)
+    
+
+class ResourceDetailsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows teachers to be viewed or edited.
+    """
+    serializer_class =  ResourceSerializer
+    queryset =  Resource.objects.all()
+
+    def list(self, request):
+        r_id = request.GET.get('resource_id')
+        needed = request.GET.get('needed')
+        
+        if needed == 'Teachers':
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(resource__id=r_id).all()
+            d = ResourceTeacherSerializer(c, many=True).data
+        elif needed == 'Teacher_activities':
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(resource__id=r_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = Activity.objects.select_related('teacher').filter(teacher__id__in=ts).all()
+            d = ActivitySerializer(c, many=True).data
+        elif needed == 'Subjects':
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(resource__id=r_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = TeacherSubject.objects.select_related('teacher', 'subject').filter(teacher__id__in=ts).all()
+            d = TeacherSubjectSerializer(c, many=True).data
+        elif needed == 'Student_progresses':
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(resource__id=r_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = TeacherSubject.objects.select_related('teacher', 'subject').filter(teacher__id__in=ts).all()
+            ss = [cc.subject.id for cc in c]
+            c = StudentProgress.objects.select_related('subject').filter(subject__id__in=ss).all()
+            d = StudentProgressSerializer(c, many=True).data
+        elif needed == 'Coaches':
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(resource__id=r_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(teacher__id__in=ts).all()
+            d = CoachTeacherSerializer(c, many=True).data
+        else:
+            c = Resource.objects.all()
+            d = ResourceSerializer(c, many=True).data
+        return Response(d, status=status.HTTP_200_OK)
+    
+
+class CoachDetailsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows teachers to be viewed or edited.
+    """
+    serializer_class =  CoachSerializer
+    queryset =  Coach.objects.all()
+
+    def list(self, request):
+        c_id = request.GET.get('coach_id')
+        needed = request.GET.get('needed')
+        
+        if needed == 'Teachers':
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(coach__id=c_id).all()
+            d = CoachTeacherSerializer(c, many=True).data
+        elif needed == 'Teacher_activities':
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(coach__id=c_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = Activity.objects.select_related('teacher').filter(teacher__id__in=ts).all()
+            d = ActivitySerializer(c, many=True).data
+        elif needed == 'Subjects':
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(coach__id=c_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = TeacherSubject.objects.select_related('teacher', 'subject').filter(teacher__id__in=ts).all()
+            d = TeacherSubjectSerializer(c, many=True).data
+        elif needed == 'Student_progresses':
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(coach__id=c_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = TeacherSubject.objects.select_related('teacher', 'subject').filter(teacher__id__in=ts).all()
+            ss = [cc.subject.id for cc in c]
+            c = StudentProgress.objects.select_related('subject').filter(subject__id__in=ss).all()
+            d = StudentProgressSerializer(c, many=True).data
+        elif needed == 'Resources':
+            c = CoachTeacher.objects.select_related('teacher', 'coach').filter(coach__id=c_id).all()
+            ts = [cc.teacher.id for cc in c]
+            c = ResourceTeacher.objects.select_related('teacher', 'resource').filter(teacher__id__in=ts).all()
+            d = ResourceTeacherSerializer(c, many=True).data
+        else:
+            c = Coach.objects.all()
+            d = CoachSerializer(c, many=True).data
+        return Response(d, status=status.HTTP_200_OK)

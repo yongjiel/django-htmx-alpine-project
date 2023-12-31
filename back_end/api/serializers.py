@@ -53,18 +53,33 @@ class CoachSerializer(serializers.ModelSerializer):
 
 
 class TeacherSubjectSerializer(serializers.ModelSerializer):
+    teacher = TeacherSerializer(many=False, read_only=True)
+    subject = SubjectSerializer(many=False, read_only=True)
     class Meta:
         model = TeacherSubject
-        fields = '__all__'
+        fields = [field.name for field in model._meta.fields]
+        fields.append('teacher')
+        fields.append('subject')
+        read_only_fields = ['teacher', 'subject']
 
 
 class ResourceTeacherSerializer(serializers.ModelSerializer):
+    teacher = TeacherSerializer(many=False, read_only=True)
+    resource = ResourceSerializer(many=False, read_only=True)
     class Meta:
         model = ResourceTeacher
-        fields = '__all__'
+        fields = [field.name for field in model._meta.fields]
+        fields.append('teacher')
+        fields.append('resource')
+        read_only_fields = ['teacher', 'resource']
 
 
 class CoachTeacherSerializer(serializers.ModelSerializer):
+    teacher = TeacherSerializer(many=False, read_only=True)
+    coach = CoachSerializer(many=False, read_only=True)
     class Meta:
         model = CoachTeacher
-        fields = '__all__'
+        fields = [field.name for field in model._meta.fields]
+        fields.append('teacher')
+        fields.append('coach')
+        read_only_fields = ['teacher', 'coach']

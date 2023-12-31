@@ -4,7 +4,10 @@ from .views import (TeacherViewSet, SubjectViewSet,
                     StudentProgressViewSet, ResourceViewSet,
                     CoachViewSet, TeacherSubjectViewSet,
                     CoachTeacherViewSet, ResourceTeacherViewSet,
-                    ActivityViewSet, index)
+                    ActivityViewSet, TeacherDetailsViewSet, 
+                    ActivityDetailsViewSet, SubjectDetailsViewSet,
+                    StudentProgressDetailsViewSet, ResourceDetailsViewSet,
+                    CoachDetailsViewSet, index)
 
 
 router = routers.DefaultRouter()
@@ -53,7 +56,24 @@ router.register(r'resource_teacher',
 router.register(r'teacher_subject',
                 TeacherSubjectViewSet,
                 basename='teacher_subject')
-
+router.register(r'teacher_details',
+                TeacherDetailsViewSet,
+                basename='teacher_subject')
+router.register(r'teacher_activity_details',
+                ActivityDetailsViewSet,
+                basename='teacher_subject')
+router.register(r'subject_details',
+                SubjectDetailsViewSet,
+                basename='subject_details')
+router.register(r'student_progress_details',
+                StudentProgressDetailsViewSet,
+                basename='student_progress_details')
+router.register(r'resource_details',
+                ResourceDetailsViewSet,
+                basename='resource_details')
+router.register(r'coach_details',
+                CoachDetailsViewSet,
+                basename='coach_details')
 
 urlpatterns = [
     path('index', index),

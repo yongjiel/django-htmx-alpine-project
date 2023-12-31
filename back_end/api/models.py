@@ -27,7 +27,6 @@ class Activity(models.Model, Base):
 
 
 class Subject(models.Model, Base):
-    __tablename__ = "subjects"
     # Basic model
     name = models.CharField(max_length=100, null=False)
     class Meta:

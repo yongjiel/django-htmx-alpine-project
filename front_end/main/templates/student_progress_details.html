@@ -41,36 +41,36 @@
         {% for ts in results %}
         <tr>
             {% if needed == "Teachers" %}
-                <td>{{ ts[0].id }}</td>
-                <td>{{ ts[0].name }}</td>
+                <td>{{ ts.teacher.id }}</td>
+                <td>{{ ts.teacher.name }}</td>
             {% elif needed == "Teacher_activities" %}
-                <td>{{ ts[-1].id }}</td>
-                <td>{{ ts[0].id }}</td>
-                <td>{{ ts[0].name }}</td>
-                <td>{{ ts[-1].last_active }}</td>
-                <td>{{ ts[-1].activity_score }}</td>
-                <td>{{ ts[-1].student_interaction_rating }}</td>
+                <td>{{ ts.id }}</td>
+                <td>{{ ts.teacher.id }}</td>
+                <td>{{ ts.teacher.name }}</td>
+                <td>{{ ts.last_active }}</td>
+                <td>{{ ts.activity_score }}</td>
+                <td>{{ ts.student_interaction_rating }}</td>
             {% elif needed == "Subjects" %}
-                <td>{{ ts[0].id }}</td>
-                <td>{{ ts[0].name }}</td>
+                <td>{{ ts.id }}</td>
+                <td>{{ ts.name }}</td>
             {% elif needed == 'Resources' %}
-                <td>{{ ts[0].name }}</td>
-                <td>{{ ts[2].id }}</td>
-                <td>{{ ts[2].name }}</td>
-                <td>{{ ts[2].utilization_rate }}</td>
+                <td>{{ ts.teacher.name }}</td>
+                <td>{{ ts.resource.id }}</td>
+                <td>{{ ts.resource.name }}</td>
+                <td>{{ ts.resource.utilization_rate }}</td>
             {% elif needed == 'Coaches' %}
-                <td>{{ ts[0].name }}</td>
-                <td>{{ ts[2].id }}</td>
-                <td>{{ ts[2].name }}</td>
-                <td>{{ ts[2].specialization }}</td>
-                <td>{{ ts[2].years_of_experience }}</td>
-                <td>{{ ts[1].last_meeting_date }}</td>
-                <td>{{ ts[1].meeting_notes }}</td>
+                <td>{{ ts.teacher.name }}</td>
+                <td>{{ ts.coach.id }}</td>
+                <td>{{ ts.coach.name }}</td>
+                <td>{{ ts.coach.specialization }}</td>
+                <td>{{ ts.coach.years_of_experience }}</td>
+                <td>{{ ts.last_meeting_date }}</td>
+                <td>{{ ts.meeting_notes }}</td>
             {% else %}
-                <td>{{ ts[0].id }}</td>
-                <td>{{ ts[0].name }}</td>
-                <td>{{ ts[2].id }}</td>
-                <td>{{ ts[2].name }}</td>
+                <td>{{ ts.id }}</td>
+                <td>{{ ts.name }}</td>
+                <td>{{ ts.id }}</td>
+                <td>{{ ts.name }}</td>
             {% endif %}
         </tr>
         {% endfor %}

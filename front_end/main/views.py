@@ -56,27 +56,70 @@ def _get_data_from_remote(uri, request):
     # '/teachers/'
     url = Config.BACK_END_HOST + uri
     arg = ''
-    if request.GET.get('q_teachers', ''):
-        arg = "?q_teachers=" + request.GET.get('q_teachers', '')
-    elif request.GET.get('q_teacher_activities', ''):
-        arg = "?q_teacher_activities=" + request.GET.get('q_teacher_activities', '')
-    elif request.GET.get('q_subjects', ''):
-        arg = "?q_subjects=" + request.GET.get('q_subjects', '')
-    elif request.GET.get('q_student_progresses', ''):
-        arg = "?q_student_progresses=" + request.GET.get('q_student_progresses', '')
-    elif request.GET.get('q_resources', ''):
-        arg = "?q_resources=" + request.GET.get('q_resources', '')
-    elif request.GET.get('q_coaches', ''):
-        arg = "?q_coaches=" + request.GET.get('q_coaches', '')
-    
+    if request.GET:
+        arg += '?'
+        tmp = []
+        for k in request.GET:
+            tmp.append( "{}=".format(k) + request.GET.get(k, '') )
+        arg += "&".join(tmp)
     if arg:
         arg = arg.replace(' ', '%20')
         url = url  + arg
 
     data = requests.get(url)
     j = data.json()
-    print("/////////")
-    print(url)
-    print(j)
-    print(len(j))
     return j
+
+
+def teacher_details(request):
+    results = _get_data_from_remote('/api/teacher_details/', request)
+    needed = request.GET.get('needed', '')
+    context = {'results': results,
+               'flash_flag': False,
+               'needed': needed}
+    return render(request, 'teacher_details.html', context)
+
+
+def teacher_activity_details(request):
+    results = _get_data_from_remote('/api/teacher_activity_details/', request)
+    needed = request.GET.get('needed', '')
+    context = {'results': results,
+               'flash_flag': False,
+               'needed': needed}
+    return render(request, 'activity_details.html', context)
+
+
+def subject_details(request):
+    results = _get_data_from_remote('/api/subject_details/', request)
+    needed = request.GET.get('needed', '')
+    context = {'results': results,
+               'flash_flag': False,
+               'needed': needed}
+    return render(request, 'subject_details.html', context)
+
+
+def student_progress_details(request):
+    results = _get_data_from_remote('/api/student_progress_details/', request)
+    needed = request.GET.get('needed', '')
+    context = {'results': results,
+               'flash_flag': False,
+               'needed': needed}
+    return render(request, 'student_progress_details.html', context)
+
+
+def  resource_details(request):
+    results = _get_data_from_remote('/api/resource_details/', request)
+    needed = request.GET.get('needed', '')
+    context = {'results': results,
+               'flash_flag': False,
+               'needed': needed}
+    return render(request, 'resource_details.html', context)
+
+
+def coach_details(request):
+    results = _get_data_from_remote('/api/coach_details/', request)
+    needed = request.GET.get('needed', '')
+    context = {'results': results,
+               'flash_flag': False,
+               'needed': needed}
+    return render(request, 'coach_details.html', context)
