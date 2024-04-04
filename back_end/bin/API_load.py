@@ -9,7 +9,7 @@ import requests
 
 
 PROTOCOL = os.environ.get('PROTOCOL', None) or 'http'
-BACKENDPORT = os.environ.get('BACKENDPORT', None) or '8001'
+BACKENDPORT = os.environ.get('BACKENDPORT', None) or '8008'
 BACKENDHOST =   os.environ.get('BACKENDSERVER', None) or '127.0.0.1'
 BACK_END_HOST = f"{PROTOCOL}://{BACKENDHOST}:{BACKENDPORT}"  # if necessary, update it with your host
     
@@ -71,10 +71,10 @@ def for_coach_teacher_interactions(key, value_list):
     #     "meeting_notes": "Discussed student engagement strategies."
     #   }
     url = BACK_END_HOST + "/api/coach_teacher/"
-    value_list['coach'] = value_list['coach_id']
-    value_list['teacher'] = value_list['teacher_id']
-    del value_list['coach_id']
-    del value_list['teacher_id']
+    # value_list['coach'] = value_list['coach_id']
+    # value_list['teacher'] = value_list['teacher_id']
+    # del value_list['coach_id']
+    # del value_list['teacher_id']
     x = requests.post(url, value_list)
     if x.status_code not in [200, 201, 204]:
         print(key, value_list)
@@ -115,7 +115,7 @@ def for_resource_management(key, value_list):
         print(key, value_list)
         sys.exit(-1)
     for t in tmp:
-        temp ={'teacher': t, 'resource': value_list['id']}
+        temp ={'teacher_id': t, 'resource_id': value_list['id']}
         url = BACK_END_HOST + "/api/resource_teacher/"
         x = requests.post(url, temp)
         if x.status_code not in [200, 201, 204]:
@@ -133,7 +133,7 @@ def for_student_progress(key, value_list):
     #   }
     o_id = post_and_get_id( value_list['subject'], 'subjects', key)
     del value_list['subject']
-    value_list['subject'] = o_id
+    value_list['subject_id'] = o_id
     url = BACK_END_HOST + "/api/student_progresses/"
     x = requests.post(url, value_list)
     if x.status_code not in [200, 201, 204]:
@@ -157,7 +157,7 @@ def for_teacher_activities(key, value_list):
     if x.status_code not in [200, 201, 204]:
         print(x.status_code)
         print(url)
-        print(key, temp)
+        print(url, " Error ", key, temp)
         sys.exit(-1)
 
     for s in value_list['subjects_taught']:
@@ -166,18 +166,18 @@ def for_teacher_activities(key, value_list):
         x = requests.post(url, json=temp)
         if x.status_code not in [200, 201, 204]:
             print(x.status_code)
-            print(key, temp)
+            print("subjects_taught Error ", key, temp)
             sys.exit(-1)
     
     temp = value_list['subjects_taught']
-    value_list['teacher'] = value_list['teacher_id']
-    del value_list['teacher_id']
+    # value_list['teacher'] = value_list['teacher_id']
+    # del value_list['teacher_id']
     del value_list['name']
     del value_list['subjects_taught']
     url = BACK_END_HOST + "/api/activities/"
     x = requests.post(url, json=value_list)
     if x.status_code not in [200, 201, 204]:
-        print(key, value_list)
+        print(url, " Error ", key, value_list)
         sys.exit(-1)
     
     for s in temp:
@@ -192,20 +192,22 @@ def for_teacher_activities(key, value_list):
             subject = j[0]['id']
             # load to teacher_subject table
             url = BACK_END_HOST + "/api/teacher_subject/"
-            x = requests.post(url, json={'teacher': value_list['teacher'],
-                                         'subject': subject})
+            x = requests.post(url, json={'teacher_id': value_list['teacher_id'],
+                                         'subject_id': subject})
             if x.status_code not in [200, 201, 204]:
                 print(key, value_list)
                 sys.exit(-1)
     
 
 def main():
+    print("Start...\n")
     json_file = sys.argv[1]
     f = open(json_file, 'r')
     lst = f.readlines()
     content = json.loads(''.join(lst))
     for k in list(content.keys()):
         load_to_db(k, content[k])
+    print("End.\n")
 
 if __name__== '__main__':
     

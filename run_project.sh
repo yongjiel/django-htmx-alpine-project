@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Before run this, check api/models.py to turn all code for API_load.py alive.
+
+
 set -e
 
 

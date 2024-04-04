@@ -106,7 +106,7 @@ class CoachTeacher(models.Model, Base):
     teacher = models.ForeignKey(Teacher,
                                    on_delete=models.CASCADE,
                                     to_field='id',
-                                    related_name='coaches')
+                                   related_name='coaches')
     last_meeting_date = models.DateField(auto_now_add=True, null=False)
     meeting_notes = models.CharField(max_length=512, null=False)
     class Meta:

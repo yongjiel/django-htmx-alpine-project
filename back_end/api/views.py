@@ -112,7 +112,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         data = request.data
         serializer = ActivitySerializer(data=data)
 
-        m = Activity.objects.filter(teacher=data['teacher']).first()
+        m = Activity.objects.filter(teacher_id=str(data['teacher_id'])).first()
         if not m:
             if serializer.is_valid():
                 m = serializer.save()
@@ -271,17 +271,20 @@ class ResourceTeacherViewSet(viewsets.ModelViewSet):
         data = request.data
         serializer = ResourceTeacherSerializer(data=data)
         m = ResourceTeacher.objects.filter(
-                resource=data['resource']).filter(
-                teacher=data['teacher']).first()
+                resource_id=data['resource_id']).filter(
+                teacher_id=data['teacher_id']).first()
+        
         if not m:
             if serializer.is_valid():
-                m = serializer.save()
+                m = serializer.save(resource=Resource.objects.filter(id=data['resource_id']).first(),
+                                    teacher=Teacher.objects.filter(id=data['teacher_id']).first())
                 ok_message = {'success': 'OK', 'message': "created", 'status_code': 201}
                 return Response(ok_message)
             else:
                 print(serializer.errors)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
+            #print(m.__dict__)
             exist_message = {'success': 'OK', 'message': "Aleady exists", 'status_code': 204}
             return Response(exist_message, status=status.HTTP_204_NO_CONTENT)
     
@@ -306,11 +309,12 @@ class CoachTeacherViewSet(viewsets.ModelViewSet):
         data = request.data
         serializer = CoachTeacherSerializer(data=data)
         m = CoachTeacher.objects.filter(
-                    coach=data['coach']).filter(
-                    teacher=data['teacher']).first()
+                    coach_id=data['coach_id']).filter(
+                    teacher_id=data['teacher_id']).first()
         if not m:
             if serializer.is_valid():
-                m = serializer.save()
+                m = serializer.save(coach=Coach.objects.filter(id=data['coach_id']).first(),
+                            teacher=Teacher.objects.filter(id=data['teacher_id']).first())
                 ok_message = {'success': 'OK', 'message': "created", 'status_code': 201}
                 return Response(ok_message)
             else:
@@ -341,11 +345,12 @@ class TeacherSubjectViewSet(viewsets.ModelViewSet):
         data = request.data
         serializer = TeacherSubjectSerializer(data=data)
         m = TeacherSubject.objects.filter(
-                teacher=data['teacher']).filter(
-                subject=data['subject']).first()
+                teacher_id=data['teacher_id']).filter(
+                subject_id=data['subject_id']).first()
         if not m:
             if serializer.is_valid():
-                m = serializer.save()
+                m = serializer.save(teacher=Teacher.objects.filter(id=data['teacher_id']).first(),
+                            subject=Subject.objects.filter(id=data['subject_id']).first())
                 ok_message = {'success': 'OK', 'message': "created", 'status_code': 201}
                 return Response(ok_message)
             else:

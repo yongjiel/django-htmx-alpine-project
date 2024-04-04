@@ -1,12 +1,14 @@
-1. This project comes up with flask + htmx + Alpine.js as front
-   end, flask + PostgreSQL as back end.
+
+
+1. This project comes up with django + htmx + Alpine.js as front
+   end, django + sqlite3 as back end.
 
 2. Prerequisite: 
-   1. Python3.11 is used in development. Please get 
-      Python3.11 ready. 
+   1. Python3.12 is used in development. Please get 
+      Python3.12 ready. 
    2. PostgresSQL server is installed in local. 
       `createdb` and `dropdb` command-line commands should exist.
-
+'''
 3. Set up the environment variables. This is a MUST.
    `export POSTGRES_USERNAME=<your_postgre_username>;`
    `export POSTGRES_PASSWORD=<your_postgre_password>;`
@@ -15,6 +17,7 @@
    `export POSTGRES_DB=<your_prstgres_db>`
    If POSTGRES_DB exits in PostgreSQL server, please remove it
    first, then recreate it with empty DB.
+'''
 
 4. Set up the back end and front end server's environment varialbes.
    These varialbes will be used in different spots in the config and loading-data and start-servers steps. This is a MUST.
@@ -24,7 +27,8 @@
    `export FRONTENDHOST=<your_frontend_host>;`, like 127.0.0.1
    `export FRONTENDPORT=<your_frontend_port>`, like 5000
 
-5. Now please run command `./run_project.sh`. 
+5. Please run command `./run_project.sh`. 
+
    This script run these steps.
    1. Boot up virtual env in back end.
    2. Install packages for back end.
